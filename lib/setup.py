@@ -4,7 +4,7 @@ import sys
 import platform
 
 def run_command(command):
-    """Execute commands and display output."""
+    """Execute a system command and display its output."""
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
         print(f"✅ Success: {command}")
