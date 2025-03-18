@@ -100,4 +100,4 @@ def main():
     print("🎉 All setup completed successfully!")
 
 if __name__ == "__main__":
-    main(
+    main()
