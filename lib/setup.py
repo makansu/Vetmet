@@ -4,63 +4,63 @@ import sys
 import platform
 
 def run_command(command):
-    """Komutları çalıştır ve çıktıyı göster."""
+    """Execute commands and display output."""
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
-        print(f"✅ Başarılı: {command}")
+        print(f"✅ Success: {command}")
         if result.stdout:
             print(result.stdout.strip())
     except subprocess.CalledProcessError as e:
-        print(f"❌ Hata ({command}): {e.stderr.strip()}")
+        print(f"❌ Error ({command}): {e.stderr.strip()}")
         sys.exit(1)
 
 def install_flutter():
-    """Flutter SDK'nın güncellenmesini ve bağımlılıkların yüklenmesini sağlar."""
-    print("🚀 Flutter kurulumu başlatılıyor...")
-    
-    # Flutter'ın sistemde olup olmadığını kontrol et
+    """Ensure Flutter is installed, updated, and dependencies are fetched."""
+    print("🚀 Starting Flutter setup...")
+
+    # Check if Flutter is installed
     try:
         run_command("flutter --version")
     except:
-        print("❌ Flutter yüklü değil! Lütfen önce Flutter'ı yükleyin: https://flutter.dev/docs/get-started/install")
+        print("❌ Flutter is not installed! Please install it first: https://flutter.dev/docs/get-started/install")
         sys.exit(1)
 
     run_command("flutter upgrade")
     run_command("flutter doctor")
     run_command("flutter pub get")
-    print("✅ Flutter kurulumu tamamlandı!")
+    print("✅ Flutter setup completed!")
 
 def setup_android():
-    """Android ortamını hazırlar."""
-    print("📱 Android ortamı kuruluyor...")
-    
-    # ANDROID_HOME kontrolü
+    """Prepare the Android development environment."""
+    print("📱 Setting up Android environment...")
+
+    # Check ANDROID_HOME variable
     android_home = os.environ.get("ANDROID_HOME")
     if not android_home:
-        print("⚠️ ANDROID_HOME tanımlanmamış! Android SDK'nın yüklü olduğundan emin olun.")
-    
+        print("⚠️ Warning: ANDROID_HOME is not set! Ensure Android SDK is installed.")
+
     run_command("flutter config --android-sdk $(echo $ANDROID_HOME)")
     run_command("flutter build apk")
-    print("✅ Android kurulumu tamamlandı!")
+    print("✅ Android setup completed!")
 
 def setup_ios():
-    """iOS ortamını hazırlar."""
+    """Prepare the iOS development environment (MacOS only)."""
     if platform.system() != "Darwin":
-        print("❌ iOS kurulumu yalnızca macOS sistemlerde desteklenir!")
+        print("❌ iOS setup is only supported on macOS!")
         return
 
     if not os.path.isdir("ios"):
-        print("❌ iOS klasörü bulunamadı! Flutter projesi değil mi?")
+        print("❌ iOS directory not found! Is this a valid Flutter project?")
         sys.exit(1)
-    
-    print("🍏 iOS ortamı hazırlanıyor...")
+
+    print("🍏 Setting up iOS environment...")
     run_command("cd ios && pod install")
     run_command("flutter build ios --release --no-codesign")
-    print("✅ iOS kurulumu tamamlandı!")
+    print("✅ iOS setup completed!")
 
 def create_codemagic_yaml():
-    """Codemagic için YAML dosyasını oluşturur."""
-    print("📄 Codemagic yapılandırma dosyası oluşturuluyor...")
+    """Generate a Codemagic configuration YAML file."""
+    print("📄 Creating Codemagic configuration file...")
 
     yaml_content = """\
 workflows:
@@ -83,9 +83,9 @@ workflows:
     try:
         with open("codemagic.yaml", "w") as f:
             f.write(yaml_content)
-        print("✅ Codemagic YAML dosyası başarıyla oluşturuldu.")
+        print("✅ Codemagic YAML file created successfully.")
     except Exception as e:
-        print(f"❌ Codemagic YAML dosyası oluşturulamadı: {e}")
+        print(f"❌ Failed to create Codemagic YAML file: {e}")
         sys.exit(1)
 
 def main():
@@ -93,7 +93,8 @@ def main():
     setup_android()
     setup_ios()
     create_codemagic_yaml()
-    print("🎉 Tüm kurulum başarıyla tamamlandı!")
+    print("🎉 All setup completed successfully!")
 
 if __name__ == "__main__":
     main()
+   
