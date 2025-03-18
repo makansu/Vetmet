@@ -98,5 +98,6 @@ def main():
     setup_ios()
     create_codemagic_yaml()
     print("🎉 All setup completed successfully!")
+
 if __name__ == "__main__":
     main()
