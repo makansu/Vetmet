@@ -38,8 +38,9 @@ def setup_android():
     android_home = os.environ.get("ANDROID_HOME")
     if not android_home:
         print("⚠️ Warning: ANDROID_HOME is not set! Ensure Android SDK is installed.")
+    else:
+        run_command(f"flutter config --android-sdk {android_home}")
 
-    run_command("flutter config --android-sdk $(echo $ANDROID_HOME)")
     run_command("flutter build apk")
     print("✅ Android setup completed!")
 
@@ -71,6 +72,9 @@ workflows:
       events:
         - push
         - pull_request
+    environment:
+      vars:
+        ANDROID_HOME: $HOME/Library/Android/sdk
     scripts:
       - flutter pub get
       - flutter build apk
@@ -97,4 +101,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-   
