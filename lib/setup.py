@@ -3,8 +3,9 @@ import subprocess
 import sys
 import platform
 
+# Function to execute shell commands safely
 def run_command(command, critical=True):
-    """Execute a system command and display its output."""
+    """Executes a system command, captures output, and handles errors."""
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
         print(f"✅ Success: {command}")
@@ -15,15 +16,16 @@ def run_command(command, critical=True):
         if critical:
             sys.exit(1)
 
+# Function to install and validate Flutter
 def install_flutter():
-    """Ensure Flutter is installed, updated, and dependencies are fetched."""
+    """Ensures Flutter is installed and updated with necessary dependencies."""
     print("🚀 Starting Flutter setup...")
 
-    # Check if Flutter is installed
+    # Verify Flutter installation
     try:
         run_command("flutter --version", critical=False)
     except:
-        print("❌ Flutter is not installed! Please install it first: https://flutter.dev/docs/get-started/install")
+        print("❌ Flutter is not installed! Please install Flutter: https://flutter.dev/docs/get-started/install")
         sys.exit(1)
 
     run_command("flutter upgrade")
@@ -31,8 +33,9 @@ def install_flutter():
     run_command("flutter pub get")
     print("✅ Flutter setup completed!")
 
+# Function to configure Android environment
 def setup_android():
-    """Prepare the Android development environment."""
+    """Configures Android SDK and builds APK."""
     print("📱 Setting up Android environment...")
 
     android_home = os.environ.get("ANDROID_HOME")
@@ -44,14 +47,15 @@ def setup_android():
     run_command("flutter build apk")
     print("✅ Android setup completed!")
 
+# Function to configure iOS environment (MacOS only)
 def setup_ios():
-    """Prepare the iOS development environment (macOS only)."""
+    """Configures iOS dependencies and builds IPA."""
     if platform.system() != "Darwin":
         print("❌ iOS setup is only supported on macOS!")
         return
 
     if not os.path.isdir("ios"):
-        print("❌ iOS directory not found! Is this a valid Flutter project?")
+        print("❌ iOS directory missing! Ensure this is a valid Flutter project.")
         sys.exit(1)
 
     print("🍏 Setting up iOS environment...")
@@ -59,8 +63,9 @@ def setup_ios():
     run_command("flutter build ios --release --no-codesign")
     print("✅ iOS setup completed!")
 
+# Function to create Codemagic YAML configuration
 def create_codemagic_yaml():
-    """Generate a Codemagic configuration YAML file."""
+    """Generates a Codemagic YAML file for automated CI/CD deployment."""
     print("📄 Creating Codemagic configuration file...")
 
     yaml_content = """\
@@ -92,13 +97,24 @@ workflows:
         print(f"❌ Failed to create Codemagic YAML file: {e}")
         sys.exit(1)
 
+# Function to initialize Firebase CLI (optional)
+def setup_firebase():
+    """Installs Firebase CLI and authenticates user."""
+    print("🔥 Setting up Firebase CLI...")
+    run_command("npm install -g firebase-tools")
+    run_command("firebase login")
+    print("✅ Firebase setup completed!")
+
+# Function to execute all steps in order
 def main():
+    """Runs the full setup process for Flutter, Android, iOS, and CI/CD."""
     install_flutter()
     setup_android()
     setup_ios()
+    setup_firebase()
     create_codemagic_yaml()
     print("🎉 All setup completed successfully!")
 
-# ✅ Guaranteed Execution - Fixed main execution block
+# ✅ Ensures script executes correctly when run directly
 if __name__ == "__main__":
     main()
