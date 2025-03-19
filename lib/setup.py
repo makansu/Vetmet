@@ -87,7 +87,7 @@ workflows:
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
       - build/ios/ipa/*.ipa
-"""
+    """
 
     try:
         with open("codemagic.yaml", "w") as f:
