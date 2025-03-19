@@ -3,7 +3,6 @@ import subprocess
 import sys
 import platform
 
-# Function to execute shell commands safely
 def run_command(command, critical=True):
     """Executes a system command, captures output, and handles errors."""
     try:
@@ -16,15 +15,13 @@ def run_command(command, critical=True):
         if critical:
             sys.exit(1)
 
-# Function to install and validate Flutter
 def install_flutter():
     """Ensures Flutter is installed and updated with necessary dependencies."""
     print("🚀 Starting Flutter setup...")
 
-    # Verify Flutter installation
     try:
         run_command("flutter --version", critical=False)
-    except:
+    except subprocess.CalledProcessError:
         print("❌ Flutter is not installed! Please install Flutter: https://flutter.dev/docs/get-started/install")
         sys.exit(1)
 
@@ -33,7 +30,6 @@ def install_flutter():
     run_command("flutter pub get")
     print("✅ Flutter setup completed!")
 
-# Function to configure Android environment
 def setup_android():
     """Configures Android SDK and builds APK."""
     print("📱 Setting up Android environment...")
@@ -47,7 +43,6 @@ def setup_android():
     run_command("flutter build apk")
     print("✅ Android setup completed!")
 
-# Function to configure iOS environment (MacOS only)
 def setup_ios():
     """Configures iOS dependencies and builds IPA."""
     if platform.system() != "Darwin":
@@ -63,7 +58,6 @@ def setup_ios():
     run_command("flutter build ios --release --no-codesign")
     print("✅ iOS setup completed!")
 
-# Function to create Codemagic YAML configuration
 def create_codemagic_yaml():
     """Generates a Codemagic YAML file for automated CI/CD deployment."""
     print("📄 Creating Codemagic configuration file...")
@@ -97,7 +91,6 @@ workflows:
         print(f"❌ Failed to create Codemagic YAML file: {e}")
         sys.exit(1)
 
-# Function to initialize Firebase CLI (optional)
 def setup_firebase():
     """Installs Firebase CLI and authenticates user."""
     print("🔥 Setting up Firebase CLI...")
@@ -105,7 +98,6 @@ def setup_firebase():
     run_command("firebase login")
     print("✅ Firebase setup completed!")
 
-# Function to execute all steps in order
 def main():
     """Runs the full setup process for Flutter, Android, iOS, and CI/CD."""
     install_flutter()
@@ -115,6 +107,5 @@ def main():
     create_codemagic_yaml()
     print("🎉 All setup completed successfully!")
 
-# ✅ Ensures script executes correctly when run directly
 if __name__ == "__main__":
     main()
