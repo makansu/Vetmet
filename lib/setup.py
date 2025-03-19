@@ -3,7 +3,7 @@ import subprocess
 import sys
 import platform
 
-def run_command(command):
+def run_command(command, critical=True):
     """Execute a system command and display its output."""
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
@@ -12,7 +12,8 @@ def run_command(command):
             print(result.stdout.strip())
     except subprocess.CalledProcessError as e:
         print(f"❌ Error ({command}): {e.stderr.strip()}")
-        sys.exit(1)
+        if critical:
+            sys.exit(1)
 
 def install_flutter():
     """Ensure Flutter is installed, updated, and dependencies are fetched."""
@@ -20,7 +21,7 @@ def install_flutter():
 
     # Check if Flutter is installed
     try:
-        run_command("flutter --version")
+        run_command("flutter --version", critical=False)
     except:
         print("❌ Flutter is not installed! Please install it first: https://flutter.dev/docs/get-started/install")
         sys.exit(1)
@@ -34,7 +35,6 @@ def setup_android():
     """Prepare the Android development environment."""
     print("📱 Setting up Android environment...")
 
-    # Check ANDROID_HOME variable
     android_home = os.environ.get("ANDROID_HOME")
     if not android_home:
         print("⚠️ Warning: ANDROID_HOME is not set! Ensure Android SDK is installed.")
@@ -45,7 +45,7 @@ def setup_android():
     print("✅ Android setup completed!")
 
 def setup_ios():
-    """Prepare the iOS development environment (MacOS only)."""
+    """Prepare the iOS development environment (macOS only)."""
     if platform.system() != "Darwin":
         print("❌ iOS setup is only supported on macOS!")
         return
@@ -99,6 +99,6 @@ def main():
     create_codemagic_yaml()
     print("🎉 All setup completed successfully!")
 
-# ✅ Fixed: Restored the main execution block to ensure the script runs properly
+# ✅ Guaranteed Execution - Fixed main execution block
 if __name__ == "__main__":
     main()
