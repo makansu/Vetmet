@@ -99,5 +99,6 @@ def main():
     create_codemagic_yaml()
     print("🎉 All setup completed successfully!")
 
+# ✅ Fixed: Restored the main execution block to ensure the script runs properly
 if __name__ == "__main__":
     main()
