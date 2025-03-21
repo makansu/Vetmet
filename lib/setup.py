@@ -11,15 +11,18 @@ def run_command(command, critical=True):
         if result.stdout:
             print(result.stdout.strip())
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error ({command}): {e.stderr.strip() if e.stderr else e}")
+        error_message = e.stderr.strip() if e.stderr else str(e)
+        print(f"❌ Error ({command}): {error_message}")
         if critical:
             sys.exit(1)
+        return False
+    return True
 
 def install_flutter():
     """Ensures Flutter is installed and updated with necessary dependencies."""
     print("🚀 Starting Flutter setup...")
 
-    version_check = subprocess.run("flutter --version", shell=True, capture_output=True, text=True)
+    version_check = subprocess.run(["flutter", "--version"], capture_output=True, text=True)
     if version_check.returncode != 0:
         print("❌ Flutter is not installed! Please install Flutter: https://flutter.dev/docs/get-started/install")
         sys.exit(1)
